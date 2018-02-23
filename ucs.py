@@ -105,4 +105,9 @@ def ucs (maxheight, current, goal) :
 	else:
 		print("No solution found")
 
-ucs(3, "(A); (B); (C); ()", "(); (A); (B); (C)")
+if __name__ == "__main__":
+	h = int(input())
+	current = raw_input()
+	goal = raw_input()
+
+	ucs(h, current, goal)
