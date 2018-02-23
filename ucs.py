@@ -108,13 +108,10 @@ def ucs (maxheight, current, goal) :
 
 if __name__ == "__main__":
 
-	lines = []
-	for line in fileinput.input():
-		lines.append(line)
 
 
-	h = int(lines[0])
-	current = lines[1]
-	goal = lines[2]
+	h = int(input())
+	current = input()
+	goal = input()
 
 	ucs(h, current, goal)
