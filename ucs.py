@@ -1,6 +1,7 @@
 import heapq
 import itertools
 import copy
+import fileinput
 
 class Node:
 	def __init__ (self, state) :
@@ -106,8 +107,12 @@ def ucs (maxheight, current, goal) :
 		print("No solution found")
 
 if __name__ == "__main__":
-	h = int(input())
-	current = raw_input()
-	goal = raw_input()
+
+	lines = []
+	for line in fileinput.input():
+    	lines.append(line)
+	h = lines[0]
+	current = lines[1]
+	goal = lines[2]
 
 	ucs(h, current, goal)
