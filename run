@@ -1,1 +1,2 @@
-python ucs.py
+#!/bin/sh
+python3 ucs.py
