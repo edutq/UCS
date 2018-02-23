@@ -110,7 +110,9 @@ if __name__ == "__main__":
 
 	lines = []
 	for line in fileinput.input():
-    	lines.append(line)
+		lines.append(line)
+
+
 	h = lines[0]
 	current = lines[1]
 	goal = lines[2]
