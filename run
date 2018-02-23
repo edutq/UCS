@@ -104,9 +104,9 @@ def ucs (maxheight, current, goal) :
 					seen.append(state)
 	else:
 		print("No solution found")
+if __name__ == "__main__":
+	h = int(input())
+	current = raw_input()
+	goal = raw_input()
 
-h = int(input())
-current = input()
-goal = input()
-
-ucs(h, current, goal)
+	ucs(h, current, goal)
