@@ -40,7 +40,7 @@ def areequal(current, goal):
 		return True
 	return False
 
-def children(node, cost, current_state, possible_movements, path) :
+def children(cost, current_state, possible_movements, path, maxheight) :
 	arrayofchildren = []
 	for action in possible_movements:
 		#print(action)
@@ -50,13 +50,16 @@ def children(node, cost, current_state, possible_movements, path) :
 		auxcost = cost + 1 + abs(action[0] - action[1])
 		if not nextstate[action[0]]:
 			continue
+		if len(nextstate[action[1]]) >= maxheight:
+			continue
+
 		value = (nextstate[action[0]]).pop()
 		
 		nextstate[action[1]].append(value)
 		auxpath.append(action)
-		child = Node(nextstate)
+		
 	
-		arrayofchildren.append((auxcost, auxpath, child))
+		arrayofchildren.append((auxcost, auxpath, nextstate))
 	return arrayofchildren
 
 def ucs (maxheight, current, goal) :
@@ -73,42 +76,38 @@ def ucs (maxheight, current, goal) :
 	cost = 0
 	path = []
 
-	q = [(cost, path, Node(current_matrix))]
+	q = [(cost, path, current_matrix)]
 	#validate that the input is not messed up
-	if all(len(var) <= maxheight for var in goal_matrix) and len(current_matrix) == len(goal_matrix):
 		
-		while q:
+	while q:
 
-			cost, path, state= heapq.heappop(q)
+		cost, path, state= heapq.heappop(q)
+		
+		if areequal(state, goal_matrix):
+			print(cost)
+			for action in path:
+				if action != path[-1]:
+					print(action, end="")
+					print("; ", end="")
+				else:
+					print(action)
+			return path
+		else:
+			#find all posible movements in the current state
+			possible_movements = list(itertools.permutations(range(0, len(state)), 2))
+			#remove the movements from the empty stack
 			
-			if areequal(state.getState(), goal_matrix):
-				print(cost)
-				for action in path:
-					if action != path[-1]:
-						print(action, end="")
-						print("; ", end="")
-					else:
-						print(action)
-				return path
-			else:
-				#find all posible movements in the current state
-				possible_movements = list(itertools.permutations(range(0, len(state.getState())), 2))
-				#remove the movements from the empty stack
-				
-				#possible_movements = cleanmovements(possible_movements, state.getState())
+			#possible_movements = cleanmovements(possible_movements, state.getState())
 
-				if state not in seen:
-					child = children(state, cost, state.getState(), possible_movements, path)
-					for var in child:
-						heapq.heappush(q, var)
+			if state not in seen:
+				child = children(cost, state, possible_movements, path, maxheight)
+				for var in child:
+					heapq.heappush(q, var)
 
-					seen.append(state)
-	else:
-		print("No solution found")
+				seen.append(state)
+	print("No solution found")
 
 if __name__ == "__main__":
-
-
 
 	h = int(input())
 	current = input()
