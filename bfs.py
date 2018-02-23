@@ -1,16 +1,14 @@
 import heapq
 import itertools
+import copy
 
 class Node:
-	def __init__ (self, cost, parent, path, state) :
-		self.cost = cost
+	def __init__ (self, parent, state) :
 		self.parent = parent
-		self.path = path
+		self.state = state
 
-def move(maxheight, current, goal) :
-	foundGoal = False
-	current_matrix = toMatrix(current)
-	goal_matrix = toMatrix(goal)
+	def getState(self):
+		return self.state
 
 
 def toMatrix(string) :
@@ -21,25 +19,45 @@ def toMatrix(string) :
 		var = var.replace('(', '')
 		list = []
 		for var2 in var.split(','):
-
-			list.append(var2)
+			if var2 == '':
+				continue
+			else:
+				list.append(var2)
 
 		matrix.append(list)
+	#print(matrix)
 	return matrix
 
-def cleanmovements(possible_movements, current_matrix) : 
-	print(possible_movements)
-	newlist = []
-	for i in range(len(current_matrix)):
-		if current_matrix[i][0] == '':
-			newlist.append(i)
-	print(newlist)
-	for t, i in zip(possible_movements, range(0,len(possible_movements))):
-		for item in newlist:
-			if t[0] == item:
-				del(possible_movements[i:i+len(current_matrix)-1])
-	print(possible_movements)
-	return possible_movements
+
+
+def areequal(current, goal):
+	count = 0
+	for index, item in enumerate(goal):
+		if item != ['X']:
+			if current[index] == goal[index]:
+				count += 1
+	if count == len(goal) - goal.count(['X']):
+		return True
+	return False
+
+def children(node, cost, current_state, possible_movements, path) :
+	arrayofchildren = []
+	for action in possible_movements:
+		#print(action)
+
+		auxpath = copy.deepcopy(path)
+		nextstate = copy.deepcopy(current_state)
+		auxcost = cost + 1 + abs(action[0] - action[1])
+		if not nextstate[action[0]]:
+			continue
+		value = (nextstate[action[0]]).pop()
+		
+		nextstate[action[1]].append(value)
+		auxpath.append(action)
+		child = Node(node, nextstate)
+	
+		arrayofchildren.append((auxcost, auxpath, child))
+	return arrayofchildren
 
 def ucs (maxheight, current, goal) :
 	#initialize the goal found in false
@@ -48,14 +66,35 @@ def ucs (maxheight, current, goal) :
 	current_matrix = toMatrix(current)
 	#parse the string of the goal state to a matrix
 	goal_matrix = toMatrix(goal)
-	#find all posible movements in the current state
-	possible_movements = list(itertools.permutations(range(0, len(current_matrix)), 2))
-	#remove the movements from the empty stack
-	possible_movements = cleanmovements(possible_movements, current_matrix)
+
 	#list of seen items
-	seen = {}
+	seen = []
 	#priority queue
-	q = [Node(0, [], [], current_matrix)]
+	cost = 0
+	path = []
 
+	q = [(cost, path, Node([], current_matrix))]
+	#validate that the input is not messed up
+	if all(len(var) <= maxheight for var in goal_matrix) and len(current_matrix) == len(goal_matrix):
+		
+		while q:
 
-ucs(3, "(A); (B); (C); ()", "(); (A); (B); (C)")
+			cost, path, state= heapq.heappop(q)
+			
+			if areequal(state.getState(), goal_matrix):
+				return path
+			else:
+				#find all posible movements in the current state
+				possible_movements = list(itertools.permutations(range(0, len(state.getState())), 2))
+				#remove the movements from the empty stack
+				
+				#possible_movements = cleanmovements(possible_movements, state.getState())
+
+				if state not in seen:
+					child = children(state, cost, state.getState(), possible_movements, path)
+					for var in child:
+						heapq.heappush(q, var)
+
+					seen.append(state)
+
+print(ucs(2, "(A); (B); (C)", "(A, C); X; X"))
