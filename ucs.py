@@ -113,7 +113,7 @@ if __name__ == "__main__":
 		lines.append(line)
 
 
-	h = lines[0]
+	h = int(lines[0])
 	current = lines[1]
 	goal = lines[2]
 
