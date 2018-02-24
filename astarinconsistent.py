@@ -2,6 +2,7 @@ import heapq
 import itertools
 import copy
 import fileinput
+import random
 
 def toMatrix(string) :
 	matrix = []
@@ -32,7 +33,16 @@ def areequal(current, goal):
 		return True
 	return False
 
-def children(cost, current_state, possible_movements, path, maxheight) :
+def inconsistentheuristic(current, goal):
+	value = 0
+	listgoal = []
+	for index, item in enumerate(goal): 
+		if item != ['X']:
+			if current[index] != goal[index]:
+				value = value + 1
+	return value + random.randrange(0,10)
+
+def children(cost, current_state, possible_movements, path, maxheight, goal) :
 	arrayofchildren = []
 	for action in possible_movements:
 		#print(action)
@@ -48,13 +58,15 @@ def children(cost, current_state, possible_movements, path, maxheight) :
 		value = (nextstate[action[0]]).pop()
 		
 		nextstate[action[1]].append(value)
+		extracost = inconsistentheuristic(nextstate, goal)
+		auxcost = auxcost + extracost
 		auxpath.append(action)
 		
 	
 		arrayofchildren.append((auxcost, auxpath, nextstate))
 	return arrayofchildren
 
-def ucs (maxheight, current, goal) :
+def astar (maxheight, current, goal) :
 	#initialize the goal found in false
 	foundGoal = False
 	#parse the string of the current state to a matrix
@@ -92,7 +104,7 @@ def ucs (maxheight, current, goal) :
 			#possible_movements = cleanmovements(possible_movements, state.getState())
 
 			if state not in seen:
-				child = children(cost, state, possible_movements, path, maxheight)
+				child = children(cost, state, possible_movements, path, maxheight, goal_matrix)
 				for var in child:
 					heapq.heappush(q, var)
 
@@ -104,5 +116,5 @@ if __name__ == "__main__":
 	h = int(input())
 	current = input()
 	goal = input()
-
-	ucs(h, current, goal)
+	random.seed(h)
+	astar(h, current, goal)
