@@ -73,7 +73,7 @@ def astar (maxheight, current, goal) :
 	current_matrix = toMatrix(current)
 	#parse the string of the goal state to a matrix
 	goal_matrix = toMatrix(goal)
-
+	#counter = 0
 	#list of seen items
 	seen = []
 	#priority queue
@@ -86,7 +86,7 @@ def astar (maxheight, current, goal) :
 	while q:
 
 		cost, path, state= heapq.heappop(q)
-		
+		#counter += 1
 		if areequal(state, goal_matrix):
 			print(cost)
 			for action in path:
@@ -95,6 +95,7 @@ def astar (maxheight, current, goal) :
 					print("; ", end="")
 				else:
 					print(action)
+			#print(counter)
 			return path
 		else:
 			#find all posible movements in the current state
@@ -109,6 +110,7 @@ def astar (maxheight, current, goal) :
 					heapq.heappush(q, var)
 
 				seen.append(state)
+	#print(counter)
 	print("No solution found")
 
 if __name__ == "__main__":

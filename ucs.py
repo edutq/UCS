@@ -56,12 +56,11 @@ def children(cost, current_state, possible_movements, path, maxheight) :
 
 def ucs (maxheight, current, goal) :
 	#initialize the goal found in false
-	foundGoal = False
 	#parse the string of the current state to a matrix
 	current_matrix = toMatrix(current)
 	#parse the string of the goal state to a matrix
 	goal_matrix = toMatrix(goal)
-
+	#counter = 0
 	#list of seen items
 	seen = []
 	#priority queue
@@ -73,8 +72,8 @@ def ucs (maxheight, current, goal) :
 		
 	while q:
 
-		cost, path, state= heapq.heappop(q)
-		
+		cost, path, state = heapq.heappop(q)
+		#counter += 1
 		if areequal(state, goal_matrix):
 			print(cost)
 			for action in path:
@@ -83,11 +82,11 @@ def ucs (maxheight, current, goal) :
 					print("; ", end="")
 				else:
 					print(action)
+			#print(counter)
 			return path
 		else:
 			#find all posible movements in the current state
 			possible_movements = list(itertools.permutations(range(0, len(state)), 2))
-			#remove the movements from the empty stack
 			
 			#possible_movements = cleanmovements(possible_movements, state.getState())
 
@@ -97,6 +96,7 @@ def ucs (maxheight, current, goal) :
 					heapq.heappush(q, var)
 
 				seen.append(state)
+	#print(counter)
 	print("No solution found")
 
 if __name__ == "__main__":
